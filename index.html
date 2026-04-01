@@ -3,64 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My App - Built for Local SEO agencies</title>
-    <meta name="description" content="For Local SEO agencies who struggle with local businesses struggle with seo, Google Business Profile Manager is a subscription that solves this problem through ranking tracking and costs $49-99/mo.">
+    <title>Google Business Profile Manager - Interactive Tool</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            padding: 40px;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-            margin: 0;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; color: #334155; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 2rem; color: #1e293b; margin-bottom: 8px; }
+        header p { color: #64748b; }
+        
+        .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card h2 { font-size: 1.1rem; margin-bottom: 16px; color: #475569; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; 
         }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; }
-        p { font-size: 1.2rem; opacity: 0.9; }
+        .form-group textarea { min-height: 80px; }
+        
+        .btn { background: #6366f1; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn:hover { background: #4f46e5; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        
+        .output { background: #f1f5f9; border-radius: 8px; padding: 20px; margin-top: 20px; display: none; }
+        .output.visible { display: block; }
+        .output h3 { font-size: 1rem; margin-bottom: 12px; color: #475569; }
+        .output ul { list-style: none; }
+        .output li { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .output li:last-child { border: none; }
+        .output .tag { display: inline-block; background: #6366f1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
+        
+        .history { margin-top: 30px; }
+        .history h3 { font-size: 1rem; margin-bottom: 12px; }
+        .history-item { background: white; border-radius: 8px; padding: 16px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .history-item .meta { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+        .history-item .preview { font-size: 14px; color: #475569; }
+        
+        .clear-btn { background: #ef4444; margin-top: 10px; }
+        .clear-btn:hover { background: #dc2626; }
     </style>
 </head>
 <body>
-    <div style="text-align:center;padding:80px 20px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;">
-        <h1 style="font-size:3rem;margin-bottom:20px;">The Google Business Profile Manager Local SEO consultants you've been waiting for</h1>
-        <p style="font-size:1.4rem;max-width:600px;margin:0 auto;">For Local SEO agencies who struggle with local businesses struggle with seo, Google Business Profile Manager is a subscription that solves this problem through ranking tracking and costs $49-99/mo.</p>
+    <div class="container">
+        <header>
+            <h1>📍 Google Business Profile Manager</h1>
+            <p>Generate optimized content for your local business</p>
+        </header>
+        
+        <div class="card">
+            <h2>🏪 Business Information</h2>
+            <div class="form-group">
+                <label>Business Name</label>
+                <input type="text" id="businessName" placeholder="e.g., Joe's Pizza">
+            </div>
+            <div class="form-group">
+                <label>Business Category</label>
+                <select id="category">
+                    <option value="">Select category...</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="plumber">Plumber</option>
+                    <option value="electrician">Electrician</option>
+                    <option value="salon">Salon/Beauty</option>
+                    <option value="gym">Fitness/Gym</option>
+                    <option value="medical">Medical/Dental</option>
+                    <option value="retail">Retail Store</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Primary Goal</label>
+                <select id="goal">
+                    <option value="">Select goal...</option>
+                    <option value="reviews">Get More Reviews</option>
+                    <option value="ranking">Improve Local Ranking</option>
+                    <option value="posts">Create Posts</option>
+                    <option value="responses">Respond to Reviews</option>
+                    <option value="optimize">Optimize Profile</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="card">
+            <button class="btn" id="generateBtn" onclick="generateContent()">Generate Content</button>
+            
+            <div class="output" id="output">
+                <h3>📋 Your Results</h3>
+                <ul id="resultsList"></ul>
+            </div>
+        </div>
+        
+        <div class="history">
+            <h3>📜 Previous Generations</h3>
+            <div id="historyList"></div>
+            <button class="btn clear-btn" onclick="clearHistory()">Clear History</button>
+        </div>
     </div>
     
-    <div style="max-width:1100px;margin:0 auto;padding:40px 20px;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin:60px 0;">
-            <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="color:#667eea;margin-bottom:15px;">🎯 For</h3>
-                <p>Local SEO agencies</p>
-            </div>
-            <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="color:#667eea;margin-bottom:15px;">💡 Solves</h3>
-                <p>Local businesses struggle with SEO.</p>
-            </div>
-            <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="color:#667eea;margin-bottom:15px;">🚀 Why Better</h3>
-                <p>No expensive enterprise contracts</p>
-            </div>
-        </div>
+    <script>
+        // Load history from localStorage
+        let history = JSON.parse(localStorage.getItem('gbp_history') || '[]');
         
-        <div style="background:white;padding:50px;border-radius:20px;text-align:center;margin:60px 0;">
-            <h2 style="color:#333;margin-bottom:20px;">Simple Pricing</h2>
-            <div style="font-size:3rem;font-weight:700;color:#667eea;">Start at $49-99/mo<span style="font-size:1rem;font-weight:400;opacity:0.7;">/mo</span></div>
-            <p style="margin-top:15px;opacity:0.7;">14-day free trial • Cancel anytime</p>
-        </div>
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if (history.length === 0) {
+                container.innerHTML = '<p style="color:#94a3b8;font-size:14px;">No previous generations yet.</p>';
+                return;
+            }
+            container.innerHTML = history.slice(0, 5).map(item => `
+                <div class="history-item">
+                    <div class="meta">${item.business} • ${item.goal} • ${new Date(item.timestamp).toLocaleString()}</div>
+                    <div class="preview">${item.results.slice(0, 2).map(r => '• ' + r.substring(0, 50) + '...').join('<br>')}</div>
+                </div>
+            `).join('');
+        }
         
-        <div style="background:white;padding:50px;border-radius:20px;margin:60px 0;">
-            <h2 style="text-align:center;margin-bottom:40px;color:#333;">What's Included</h2>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;">
-                <div style="display:flex;align-items:center;gap:15px;padding:15px;background:#f8f9fa;border-radius:8px;"><span style="background:#667eea;color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;">1</span><span>ranking tracking</span></div><div style="display:flex;align-items:center;gap:15px;padding:15px;background:#f8f9fa;border-radius:8px;"><span style="background:#667eea;color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;">2</span><span>review management</span></div><div style="display:flex;align-items:center;gap:15px;padding:15px;background:#f8f9fa;border-radius:8px;"><span style="background:#667eea;color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;">3</span><span>posts scheduling</span></div>
-            </div>
-        </div>
+        function saveHistory(business, category, goal, results) {
+            history.unshift({ business, category, goal, results, timestamp: Date.now() });
+            history = history.slice(0, 20); // Keep last 20
+            localStorage.setItem('gbp_history', JSON.stringify(history));
+            renderHistory();
+        }
         
-        <div style="text-align:center;padding:60px 20px;">
-            <button style="background:#667eea;color:white;border:none;padding:20px 50px;font-size:1.2rem;font-weight:600;border-radius:50px;cursor:pointer;">Start Free Trial</button>
-        </div>
-    </div>
-    
-    <div style="text-align:center;padding:40px;color:white;opacity:0.8;">
-        <p>Save 3 hours per week on Local</p>
-    </div>
+        function clearHistory() {
+            history = [];
+            localStorage.setItem('gbp_history', '[]');
+            renderHistory();
+        }
+        
+        // Content generation logic based on goal
+        const contentByGoal = {
+            reviews: {
+                prompts: [
+                    "Send a friendly post-card to recent customers asking for reviews",
+                    "Add a review QR code to your receipts and invoices",
+                    "Create a 'Leave us a review' link and add to email signature",
+                    "Set up automated follow-up text 2 days after service"
+                ],
+                templates: [
+                    "We'd love your feedback! Click here to leave a review: [link]",
+                    "Your experience matters to us. Share your thoughts: [link]"
+                ]
+            },
+            ranking: {
+                prompts: [
+                    "Add detailed service descriptions to your GBP profile",
+                    "Upload photos of your team, work, and facility",
+                    "Add correct business hours for all days",
+                    "Respond to ALL reviews within 24 hours",
+                    "Use keywords in your business description"
+                ],
+                templates: [
+                    "Keywords: [your service] in [your city] - expert [your category]"
+                ]
+            },
+            posts: {
+                prompts: [
+                    "Behind-the-scenes of a recent project or service",
+                    "Meet the team - introduce staff members",
+                    "Seasonal promotion or special offer",
+                    "Customer success story or case study",
+                    "Answer frequently asked questions publicly"
+                ],
+                templates: [
+                    "🎉 New! [Seasonal offer]. Visit us at [location]!",
+                    "👋 Meet our team! [Staff name] is here to help you with..."
+                ]
+            },
+            responses: {
+                prompts: [
+                    "For positive reviews: Thank customer, mention specific detail, invite to return",
+                    "For negative reviews: Apologize, offer to make it right, take offline",
+                    "For neutral reviews: Thank customer, highlight what you do well"
+                ],
+                templates: [
+                    "Thank you so much for your feedback! We're thrilled you had a great experience at [business]. We look forward to seeing you again!",
+                    "We sincerely apologize for your experience. This is not our standard. Please contact us directly so we can make this right."
+                ]
+            },
+            optimize: {
+                prompts: [
+                    "Business name: Use full official name (no keywords in name)",
+                    "Address: Verify accuracy and visibility on Google Maps",
+                    "Phone: Use local number, not toll-free",
+                    "Website: Ensure mobile-friendly and SSL secured",
+                    "Services: List all services with specific descriptions"
+                ],
+                templates: [
+                    "Profile completeness score: 85% - Add 5 more photos to reach 100%"
+                ]
+            }
+        };
+        
+        function generateContent() {
+            const business = document.getElementById('businessName').value.trim();
+            const category = document.getElementById('category').value;
+            const goal = document.getElementById('goal').value;
+            const btn = document.getElementById('generateBtn');
+            const output = document.getElementById('output');
+            const resultsList = document.getElementById('resultsList');
+            
+            // Validation
+            if (!business || !category || !goal) {
+                alert('Please fill in all fields: Business Name, Category, and Goal');
+                return;
+            }
+            
+            // Simulate generation delay
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            
+            setTimeout(() => {
+                const content = contentByGoal[goal];
+                const allItems = [...content.prompts, ...content.templates];
+                
+                // Shuffle and pick 4 items
+                const shuffled = allItems.sort(() => Math.random() - 0.5).slice(0, 4);
+                
+                // Display results
+                resultsList.innerHTML = shuffled.map(item => {
+                    const personalized = item.replace(/\[business\]/g, business).replace(/\[category\]/g, category);
+                    return `<li><span class="tag">${goal}</span>${personalized}</li>`;
+                }).join('');
+                
+                output.classList.add('visible');
+                
+                // Save to history
+                saveHistory(business, category, goal, shuffled);
+                
+                btn.disabled = false;
+                btn.textContent = 'Generate Content';
+            }, 1000);
+        }
+        
+        // Initial render
+        renderHistory();
+    </script>
 </body>
 </html>
